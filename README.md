@@ -82,21 +82,14 @@ docker run -d \
 
 ## Email Server Configuration
 
-SnappyMail supports various email providers. Configure your email settings in the admin panel:
+Configure your email server settings in the admin panel at `http://localhost:8080/?admin`:
 
-### Common IMAP/SMTP Settings
+### Standard IMAP/SMTP Ports
 
-**Gmail:**
-- IMAP: `imap.gmail.com:993` (SSL)
-- SMTP: `smtp.gmail.com:587` (STARTTLS)
+- **IMAP**: Port `993` with SSL/TLS encryption
+- **SMTP**: Port `587` with STARTTLS encryption
 
-**Outlook/Hotmail:**
-- IMAP: `outlook.office365.com:993` (SSL)
-- SMTP: `smtp-mail.outlook.com:587` (STARTTLS)
-
-**Yahoo:**
-- IMAP: `imap.mail.yahoo.com:993` (SSL)
-- SMTP: `smtp.mail.yahoo.com:587` (STARTTLS)
+Most modern email providers use these standard ports and encryption methods.
 
 ## Security Considerations
 
