@@ -1,21 +1,6 @@
 FROM php:8.2-apache
 
-# Install packages and PHP extensions
-RUN apt-get update && apt-get install -y \
-    wget \
-    unzip \
-    curl \
-    gnupg \
-    imagemagick \
-    libzip-dev \
-    libmagickwand-dev \
-    libgpgme-dev \
-    && docker-php-ext-install mbstring zip \
-    && pecl install imagick gnupg \
-    && docker-php-ext-enable imagick gnupg \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
+RUN apt-get update && apt-get install -y wget
 # Download and extract SnappyMail
 WORKDIR /var/www/html
 RUN wget -O snappymail.tar.gz "https://github.com/the-djmaze/snappymail/releases/download/v2.38.2/snappymail-2.38.2.tar.gz" \

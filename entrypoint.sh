@@ -38,27 +38,12 @@ configure_admin() {
     local password_hash
     password_hash=$(php -r "echo password_hash('$ADMIN_PASS', PASSWORD_DEFAULT);")
     
-    # Create or update config file
-    if [ ! -f "$config_file" ]; then
-        {
-            echo "[security]"
-            echo "admin_login = \"$ADMIN_USER\""
-            echo "admin_password = \"$password_hash\""
-        } > "$config_file"
-    else
-        # Update existing config
-        if grep -q "admin_login" "$config_file"; then
-            sed -i "s/admin_login = .*/admin_login = \"$ADMIN_USER\"/" "$config_file"
-        else
-            echo "admin_login = \"$ADMIN_USER\"" >> "$config_file"
-        fi
-        
-        if grep -q "admin_password" "$config_file"; then
-            sed -i "s/admin_password = .*/admin_password = \"$password_hash\"/" "$config_file"
-        else
-            echo "admin_password = \"$password_hash\"" >> "$config_file"
-        fi
-    fi
+    # Always create a fresh config file to avoid sed issues with special characters
+    {
+        echo "[security]"
+        echo "admin_login = \"$ADMIN_USER\""
+        echo "admin_password = \"$password_hash\""
+    } > "$config_file"
     
     chown www-data:www-data "$config_file"
     chmod 644 "$config_file"
