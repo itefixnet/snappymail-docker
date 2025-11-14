@@ -26,11 +26,21 @@ cd snappymail-docker
 # Build the image
 docker build -t snappymail .
 
-# Run the container
+# Run the container (with default admin account)
 docker run -d \
   --name snappymail \
   -p 8080:80 \
   -v snappymail_data:/var/www/html/data \
+  --restart unless-stopped \
+  snappymail
+
+# Or run with custom admin credentials
+docker run -d \
+  --name snappymail \
+  -p 8080:80 \
+  -v snappymail_data:/var/www/html/data \
+  -e SNAPPYMAIL_ADMIN_USER=myadmin \
+  -e SNAPPYMAIL_ADMIN_PASS=mypassword \
   --restart unless-stopped \
   snappymail
 ```
@@ -42,11 +52,11 @@ docker run -d \
 1. **Access the Admin Interface**: Navigate to `http://localhost:8080/?admin`
 
 2. **First Login**: 
-   - Username: `admin`
-   - Password: Check the container logs or the file `/var/www/html/data/_data_/_default_/admin_password.txt`
+   - **Default setup**: Username `admin` with auto-generated password
+   - **Custom setup**: Use the credentials you set via environment variables
    
    ```bash
-   # Get the admin password
+   # Get the auto-generated admin password (if using default setup)
    docker exec snappymail cat /var/www/html/data/_data_/_default_/admin_password.txt
    ```
 
@@ -59,6 +69,8 @@ docker run -d \
 ### Environment Variables
 
 - `TZ`: Set timezone (default: UTC)
+- `SNAPPYMAIL_ADMIN_USER`: Custom admin username (default: "admin")
+- `SNAPPYMAIL_ADMIN_PASS`: Custom admin password (if not set, auto-generated password is used)
 
 ### Volumes
 
@@ -94,6 +106,31 @@ SnappyMail supports various email providers. Configure your email settings in th
 4. **Firewall**: Restrict access to the admin panel (`/?admin`)
 
 ## Advanced Configuration
+
+### Custom Admin Account
+
+You can customize the admin account using environment variables:
+
+```bash
+# Set custom admin username and password
+docker run -d \
+  --name snappymail \
+  -p 8080:80 \
+  -v snappymail_data:/var/www/html/data \
+  -e SNAPPYMAIL_ADMIN_USER=myusername \
+  -e SNAPPYMAIL_ADMIN_PASS=mypassword \
+  --restart unless-stopped \
+  snappymail
+
+# Only change username (password will be auto-generated)
+docker run -d \
+  --name snappymail \
+  -p 8080:80 \
+  -v snappymail_data:/var/www/html/data \
+  -e SNAPPYMAIL_ADMIN_USER=myusername \
+  --restart unless-stopped \
+  snappymail
+```
 
 ### Custom PHP Configuration
 

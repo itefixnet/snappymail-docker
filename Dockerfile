@@ -70,11 +70,15 @@ RUN wget -O snappymail.tar.gz "https://github.com/the-djmaze/snappymail/releases
     && tar -xzf snappymail.tar.gz -C ${APACHE_DOCUMENT_ROOT} --strip-components=0 \
     && rm snappymail.tar.gz
 
+# Copy custom entrypoint script
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+
 # Set proper permissions
 RUN chown -R www-data:www-data ${APACHE_DOCUMENT_ROOT} \
     && find ${APACHE_DOCUMENT_ROOT} -type d -exec chmod 755 {} \; \
     && find ${APACHE_DOCUMENT_ROOT} -type f -exec chmod 644 {} \; \
-    && chmod -R 777 ${APACHE_DOCUMENT_ROOT}/data
+    && chmod -R 777 ${APACHE_DOCUMENT_ROOT}/data \
+    && chmod +x /usr/local/bin/entrypoint.sh
 
 # Create a custom PHP configuration
 RUN { \
@@ -113,9 +117,13 @@ VOLUME ["/var/www/html/data"]
 # Expose port 80
 EXPOSE 80
 
+# Environment variables for admin customization
+ENV SNAPPYMAIL_ADMIN_USER=""
+ENV SNAPPYMAIL_ADMIN_PASS=""
+
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD curl -f http://localhost/ || exit 1
 
-# Start Apache in foreground
-CMD ["apache2-foreground"]
+# Use custom entrypoint
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
