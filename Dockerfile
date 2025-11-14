@@ -117,9 +117,9 @@ VOLUME ["/var/www/html/data"]
 # Expose port 80
 EXPOSE 80
 
-# Environment variables for admin customization
-ENV SNAPPYMAIL_ADMIN_USER=""
-ENV SNAPPYMAIL_ADMIN_PASS=""
+# Environment variables for admin customization (REQUIRED)
+# ENV SNAPPYMAIL_ADMIN_USER=your_admin_username
+# ENV SNAPPYMAIL_ADMIN_PASS=your_admin_password
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
