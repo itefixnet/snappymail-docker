@@ -1,58 +1,94 @@
-# Basic SnappyMail Docker Container
+# SnappyMail Docker Container
 # Simple, modern & fast web-based email client
+# Based on official SnappyMail requirements: https://github.com/the-djmaze/snappymail/wiki/Installation-instructions#requirements
 FROM php:8.2-apache
 
 LABEL maintainer="Your Name <your.email@example.com>"
-LABEL description="SnappyMail webmail client - Simple, modern & fast web-based email client"
+LABEL description="SnappyMail webmail client with all required and optional PHP extensions"
 
 # Set environment variables
 ENV SNAPPYMAIL_VERSION=2.38.2
 ENV APACHE_DOCUMENT_ROOT=/var/www/html
 
-# Install system dependencies and PHP extensions required by SnappyMail
+# Install system dependencies for SnappyMail
 RUN apt-get update && apt-get install -y \
     # Basic utilities
     wget \
     unzip \
     curl \
-    # Required libraries for PHP extensions
+    # Required libraries
+    libxml2-dev \
+    zlib1g-dev \
     libzip-dev \
+    # Optional but recommended libraries
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
     libicu-dev \
     libc-client-dev \
     libkrb5-dev \
-    libssl-dev \
-    libxml2-dev \
-    zlib1g-dev \
-    # Optional: GnuPG for encrypted emails
-    gnupg \
-    # Optional: Tidy for HTML cleanup
+    libldap2-dev \
+    libsasl2-dev \
     libtidy-dev \
+    # GnuPG for encrypted emails
+    gnupg \
+    libgpgme-dev \
     # Clean up cache
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Configure and install PHP extensions
+# Configure PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) \
+    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+    && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
+
+# Install required PHP extensions for SnappyMail
+RUN docker-php-ext-install -j$(nproc) \
         # Required extensions
         mbstring \
-        zip \
         xml \
         dom \
-        # Recommended extensions
+        zip \
+        # Optional but recommended extensions
         gd \
         iconv \
         intl \
+        imap \
+        ldap \
         tidy \
-        # Optional for better performance
-        opcache
+        # Performance extensions
+        opcache \
+        # PDO extensions for contacts
+        pdo \
+        pdo_mysql \
+        pdo_pgsql \
+        pdo_sqlite
 
-# Install additional PECL extensions
-RUN pecl install redis \
-    && docker-php-ext-enable redis
+# Install PECL extensions
+RUN set -eux; \
+    # Install build dependencies
+    apt-get update && apt-get install -y \
+        autoconf \
+        g++ \
+        gcc \
+        libc6-dev \
+        make \
+        pkg-config; \
+    # Redis for caching
+    pecl install redis; \
+    docker-php-ext-enable redis; \
+    # GnuPG for encrypted emails
+    pecl install gnupg; \
+    docker-php-ext-enable gnupg; \
+    # UUID extension
+    pecl install uuid; \
+    docker-php-ext-enable uuid; \
+    # Cleanup
+    docker-php-source delete; \
+    apt-get purge -y autoconf g++ gcc libc6-dev make pkg-config; \
+    apt-get autoremove -y; \
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/*;
 
 # Configure Apache
 RUN a2enmod rewrite \
