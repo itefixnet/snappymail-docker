@@ -23,8 +23,11 @@ cd snappymail-docker
 
 2. Build and run the container:
 ```bash
-# Build the image
+# Build the image (uses default version 2.38.2)
 docker build -t snappymail .
+
+# Or build with a specific SnappyMail version
+docker build --build-arg SNAPPYMAIL_VERSION=2.38.1 -t snappymail .
 
 # Run the container (admin credentials and timezone are REQUIRED)
 docker run -d \
@@ -88,6 +91,25 @@ Most modern email providers use these standard ports and encryption methods.
 2. **Secure Data Directory**: The `data` directory contains sensitive information
 3. **Regular Updates**: Keep the container updated with the latest SnappyMail version
 4. **Firewall**: Restrict access to the admin panel (`/?admin`)
+
+## Build Configuration
+
+### Build Arguments
+
+- `SNAPPYMAIL_VERSION`: SnappyMail version to download (default: 2.38.2)
+
+```bash
+# Build with default version
+docker build -t snappymail .
+
+# Build with specific version
+docker build --build-arg SNAPPYMAIL_VERSION=2.38.1 -t snappymail .
+
+# Build with latest version (check GitHub releases)
+docker build --build-arg SNAPPYMAIL_VERSION=2.39.0 -t snappymail .
+```
+
+**Note**: Check [SnappyMail releases](https://github.com/the-djmaze/snappymail/releases) for available versions.
 
 ## Advanced Configuration
 
