@@ -15,6 +15,25 @@ SnappyMail is a drastically upgraded & secured fork of RainLoop Webmail Communit
 
 ## Quick Start
 
+### Option 1: Use Prebuilt Image (Recommended)
+
+Prebuilt Docker images are available at [Docker Hub](https://hub.docker.com/r/itefixnet/snappymail).
+
+```bash
+# Run with prebuilt image
+docker run -d \
+  --name snappymail \
+  -p 8080:80 \
+  -v snappymail_data:/var/www/html/data \
+  -e SNAPPYMAIL_ADMIN_USER=myadmin \
+  -e SNAPPYMAIL_ADMIN_PASS=mypassword \
+  -e TZ=America/New_York \
+  --restart unless-stopped \
+  itefixnet/snappymail:latest
+```
+
+### Option 2: Build from Source
+
 1. Clone this repository:
 ```bash
 git clone <repository-url>
@@ -239,6 +258,12 @@ To update to a newer version of SnappyMail:
      snappymail
    ```
 
+## Docker Hub
+
+Prebuilt images are available at: **[hub.docker.com/r/itefixnet/snappymail](https://hub.docker.com/r/itefixnet/snappymail)**
+
+For Docker Hub documentation, see: **[DOCKER_HUB_OVERVIEW.md](DOCKER_HUB_OVERVIEW.md)**
+
 ## Contributing
 
 Feel free to contribute improvements, bug fixes, or feature requests.
@@ -252,3 +277,4 @@ This Docker configuration is provided as-is. SnappyMail itself is licensed under
 - [SnappyMail Official Website](https://snappymail.eu/)
 - [SnappyMail GitHub Repository](https://github.com/the-djmaze/snappymail)
 - [SnappyMail Documentation](https://github.com/the-djmaze/snappymail/wiki)
+- [Docker Hub Repository](https://hub.docker.com/r/itefixnet/snappymail)
