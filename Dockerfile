@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
     # Required libraries for PHP extensions
     libzip-dev \
     libpng-dev \
-    libjpeg62-turbo-dev \
+    libjpeg-dev \
     libfreetype6-dev \
     libicu-dev \
     libc-client-dev \
@@ -30,17 +30,16 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     # Optional: Tidy for HTML cleanup
     libtidy-dev \
-    # Clean up
+    # Clean up cache
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Configure and install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install -j$(nproc) \
         # Required extensions
         mbstring \
         zip \
-        json \
         xml \
         dom \
         # Recommended extensions
