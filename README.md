@@ -11,11 +11,9 @@ SnappyMail is a drastically upgraded & secured fork of RainLoop Webmail Communit
 - **Optimized configuration** for performance and security
 - **Volume support** for persistent data storage
 - **Health checks** included
-- **Simple Docker run setup** - no compose required
+- **Simple Docker setup**
 
 ## Quick Start
-
-### Using the Startup Script (Recommended)
 
 1. Clone this repository:
 ```bash
@@ -23,15 +21,7 @@ git clone <repository-url>
 cd snappymail-docker
 ```
 
-2. Run the startup script:
-```bash
-./start.sh
-```
-
-3. Access SnappyMail at `http://localhost:8080`
-
-### Manual Docker Run
-
+2. Build and run the container:
 ```bash
 # Build the image
 docker build -t snappymail .
@@ -44,6 +34,8 @@ docker run -d \
   --restart unless-stopped \
   snappymail
 ```
+
+3. Access SnappyMail at `http://localhost:8080`
 
 ## Initial Setup
 
@@ -74,7 +66,7 @@ docker run -d \
 
 ### Ports
 
-- `80`: HTTP port (mapped to `8080` in docker-compose)
+- `80`: HTTP port (mapped to `8080` in the run command)
 
 ## Email Server Configuration
 
@@ -102,22 +94,6 @@ SnappyMail supports various email providers. Configure your email settings in th
 4. **Firewall**: Restrict access to the admin panel (`/?admin`)
 
 ## Advanced Configuration
-
-### Using with Reverse Proxy
-
-Example with nginx or Traefik - add labels when running the container:
-
-```bash
-docker run -d \
-  --name snappymail \
-  -p 8080:80 \
-  -v snappymail_data:/var/www/html/data \
-  --restart unless-stopped \
-  --label "traefik.enable=true" \
-  --label "traefik.http.routers.snappymail.rule=Host(\`mail.example.com\`)" \
-  --label "traefik.http.routers.snappymail.tls=true" \
-  snappymail
-```
 
 ### Custom PHP Configuration
 
@@ -205,11 +181,6 @@ To update to a newer version of SnappyMail:
      --restart unless-stopped \
      snappymail
    ```
-
-Or use the Makefile:
-```bash
-make update
-```
 
 ## Contributing
 
