@@ -26,13 +26,14 @@ cd snappymail-docker
 # Build the image
 docker build -t snappymail .
 
-# Run the container (admin credentials are REQUIRED)
+# Run the container (admin credentials and timezone are REQUIRED)
 docker run -d \
   --name snappymail \
   -p 8080:80 \
   -v snappymail_data:/var/www/html/data \
   -e SNAPPYMAIL_ADMIN_USER=myadmin \
   -e SNAPPYMAIL_ADMIN_PASS=mypassword \
+  -e TZ=Europe/Oslo \
   --restart unless-stopped \
   snappymail
 ```
@@ -54,9 +55,13 @@ docker run -d \
 
 ### Environment Variables
 
-- `TZ`: Set timezone (default: UTC)
+#### Required Variables
 - `SNAPPYMAIL_ADMIN_USER`: Admin username (**REQUIRED**)
 - `SNAPPYMAIL_ADMIN_PASS`: Admin password (**REQUIRED**)
+- `TZ`: Timezone (**REQUIRED**) - See [TIMEZONES.md](TIMEZONES.md) or [Wikipedia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+
+#### Optional Variables
+- `SNAPPYMAIL_MAX_ATTACHMENT_SIZE`: Maximum attachment size (default: 50M)
 
 ### Volumes
 
@@ -86,23 +91,44 @@ Most modern email providers use these standard ports and encryption methods.
 
 ## Advanced Configuration
 
-### Admin Account Configuration
+### Configuration Examples
 
-Both admin username and password must be provided via environment variables:
+All required variables must be provided:
 
 ```bash
-# Admin credentials are required
+# Basic setup with required variables
 docker run -d \
   --name snappymail \
   -p 8080:80 \
   -v snappymail_data:/var/www/html/data \
   -e SNAPPYMAIL_ADMIN_USER=myusername \
   -e SNAPPYMAIL_ADMIN_PASS=mypassword \
+  -e TZ=Europe/London \
+  --restart unless-stopped \
+  snappymail
+
+# With custom attachment size
+docker run -d \
+  --name snappymail \
+  -p 8080:80 \
+  -v snappymail_data:/var/www/html/data \
+  -e SNAPPYMAIL_ADMIN_USER=myusername \
+  -e SNAPPYMAIL_ADMIN_PASS=mypassword \
+  -e TZ=Asia/Tokyo \
+  -e SNAPPYMAIL_MAX_ATTACHMENT_SIZE=100M \
   --restart unless-stopped \
   snappymail
 ```
 
-**Note**: The container will not start without both `SNAPPYMAIL_ADMIN_USER` and `SNAPPYMAIL_ADMIN_PASS` environment variables.
+#### Timezone Reference
+For a complete list of timezone identifiers, see:
+- **[TIMEZONES.md](TIMEZONES.md)** - Common timezones included in this repository  
+- **[Wikipedia List](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)** - Complete timezone database
+- **[IANA Time Zone Database](https://www.iana.org/time-zones)** - Official timezone database
+
+Common examples: `America/New_York`, `Europe/London`, `Asia/Tokyo`, `UTC`
+
+**Note**: The container will not start without `SNAPPYMAIL_ADMIN_USER`, `SNAPPYMAIL_ADMIN_PASS`, and `TZ` environment variables.
 
 ### Custom PHP Configuration
 
@@ -131,9 +157,9 @@ docker run --rm \
 
 ## System Requirements
 
-- **PHP Extensions**: mbstring, zip, json, xml, dom, gd, iconv, intl, tidy, opcache
-- **Memory**: Minimum 256MB RAM (recommended 512MB+)
-- **Storage**: 100MB+ for application, additional space for email data
+- **PHP Extensions**: mbstring (included in this Docker image)
+- **Memory**: 128MB RAM recommended
+- **Storage**: ~40MB for application, additional space for email data
 
 ## Troubleshooting
 

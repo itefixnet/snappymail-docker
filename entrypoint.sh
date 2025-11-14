@@ -16,9 +16,31 @@ if [ -z "$SNAPPYMAIL_ADMIN_PASS" ]; then
     exit 1
 fi
 
+if [ -z "$TZ" ]; then
+    echo "ERROR: TZ (timezone) environment variable is required"
+    echo "See: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones"
+    exit 1
+fi
+
 # Use environment variables
 ADMIN_USER="$SNAPPYMAIL_ADMIN_USER"
 ADMIN_PASS="$SNAPPYMAIL_ADMIN_PASS"
+MAX_ATTACHMENT_SIZE="${SNAPPYMAIL_MAX_ATTACHMENT_SIZE:-50M}"
+
+# Set timezone
+echo "Setting timezone to: $TZ"
+echo "$TZ" > /etc/timezone
+ln -sf /usr/share/zoneinfo/$TZ /etc/localtime
+
+# Configure PHP with timezone and attachment size
+echo "Configuring PHP settings..."
+{
+    echo "date.timezone = $TZ"
+    echo "upload_max_filesize = $MAX_ATTACHMENT_SIZE"
+    echo "post_max_size = $MAX_ATTACHMENT_SIZE"
+    echo "memory_limit = 128M"
+    echo "max_execution_time = 300"
+} > /usr/local/etc/php/conf.d/snappymail.ini
 
 # Function to configure admin account
 configure_admin() {
