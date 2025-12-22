@@ -27,6 +27,11 @@ ADMIN_USER="$SNAPPYMAIL_ADMIN_USER"
 ADMIN_PASS="$SNAPPYMAIL_ADMIN_PASS"
 MAX_ATTACHMENT_SIZE="${SNAPPYMAIL_MAX_ATTACHMENT_SIZE:-50M}"
 
+# Ensure proper permissions for SnappyMail directories
+chown -R www-data:www-data /var/www/html
+chmod -R 755 /var/www/html
+chmod -R 775 /var/www/html/data
+
 # Set timezone
 echo "Setting timezone to: $TZ"
 echo "$TZ" > /etc/timezone
