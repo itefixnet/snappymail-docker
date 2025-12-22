@@ -1,4 +1,4 @@
-FROM php:8.4-apache
+FROM php:8.2-apache
 
 # Build argument for SnappyMail version
 ARG SNAPPYMAIL_VERSION=2.38.2
