@@ -7,7 +7,9 @@ RUN apt-get update && apt-get install -y wget
 
 # Download and extract SnappyMail
 WORKDIR /var/www/html
-RUN wget -O snappymail.tar.gz "https://github.com/the-djmaze/snappymail/releases/download/v${SNAPPYMAIL_VERSION}/snappymail-${SNAPPYMAIL_VERSION}.tar.gz" \
+RUN wget --user-agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36" \
+         --retry-connrefused --waitretry=5 --read-timeout=20 --timeout=15 --tries=5 \
+         -O snappymail.tar.gz "https://github.com/the-djmaze/snappymail/releases/download/v${SNAPPYMAIL_VERSION}/snappymail-${SNAPPYMAIL_VERSION}.tar.gz" \
     && tar -xzf snappymail.tar.gz --strip-components=0 \
     && rm snappymail.tar.gz \
     && chown -R www-data:www-data . \
