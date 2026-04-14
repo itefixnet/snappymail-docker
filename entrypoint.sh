@@ -26,6 +26,7 @@ fi
 ADMIN_USER="$SNAPPYMAIL_ADMIN_USER"
 ADMIN_PASS="$SNAPPYMAIL_ADMIN_PASS"
 MAX_ATTACHMENT_SIZE="${SNAPPYMAIL_MAX_ATTACHMENT_SIZE:-50M}"
+HTTP_PORT="${HTTP_PORT:-80}"
 
 # Ensure proper permissions for SnappyMail directories
 chown -R www-data:www-data /var/www/html
@@ -84,6 +85,11 @@ configure_admin() {
     configure_admin
     echo "Admin configuration applied"
 ) &
+
+# Configure Apache port
+echo "Configuring Apache to listen on port $HTTP_PORT..."
+sed -i "s/^Listen .*/Listen $HTTP_PORT/" /etc/apache2/ports.conf
+sed -i "s/<VirtualHost \*:[0-9]*>/<VirtualHost *:$HTTP_PORT>/" /etc/apache2/sites-enabled/*.conf
 
 # Start Apache in foreground
 exec apache2-foreground

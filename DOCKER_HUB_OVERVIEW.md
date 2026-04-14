@@ -26,7 +26,8 @@ Access SnappyMail at `http://localhost:8080`
 - `TZ` - Timezone (e.g., `America/New_York`, `Europe/London`, `UTC`)
 
 ### Optional Variables
-- `SNAPPYMAIL_MAX_ATTACHMENT_SIZE` - Maximum attachment size (default: 50M)
+- `SNAPPYMAIL_MAX_ATTACHMENT_SIZE` - Maximum attachment size (default: `50M`)
+- `HTTP_PORT` - HTTP port Apache listens on inside the container (default: `80`)
 
 ## Volumes
 
@@ -34,7 +35,7 @@ Access SnappyMail at `http://localhost:8080`
 
 ## Ports
 
-- `80` - HTTP port
+- `80` - Default HTTP port inside the container. Override with the `HTTP_PORT` environment variable.
 
 ## Email Server Configuration
 

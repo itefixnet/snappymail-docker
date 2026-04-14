@@ -83,7 +83,8 @@ docker run -d \
 - `TZ`: Timezone (**REQUIRED**) - See [TIMEZONES.md](TIMEZONES.md) or [Wikipedia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
 
 #### Optional Variables
-- `SNAPPYMAIL_MAX_ATTACHMENT_SIZE`: Maximum attachment size (default: 50M)
+- `SNAPPYMAIL_MAX_ATTACHMENT_SIZE`: Maximum attachment size (default: `50M`)
+- `HTTP_PORT`: HTTP port Apache listens on inside the container (default: `80`)
 
 ### Volumes
 
@@ -91,7 +92,7 @@ docker run -d \
 
 ### Ports
 
-- `80`: HTTP port (mapped to `8080` in the run command)
+- `80`: Default HTTP port inside the container. Override with the `HTTP_PORT` environment variable.
 
 ## Email Server Configuration
 
@@ -115,7 +116,8 @@ Most modern email providers use these standard ports and encryption methods.
 
 ### Build Arguments
 
-- `SNAPPYMAIL_VERSION`: SnappyMail version to download (default: 2.38.2)
+- `SNAPPYMAIL_VERSION`: SnappyMail version to download (default: `2.38.2`)
+- `HTTP_PORT`: Default HTTP port baked into the image (default: `80`); can still be overridden at runtime via the `HTTP_PORT` environment variable
 
 ```bash
 # Build with default version
@@ -126,6 +128,9 @@ docker build --build-arg SNAPPYMAIL_VERSION=2.38.1 -t snappymail .
 
 # Build with latest version (check GitHub releases)
 docker build --build-arg SNAPPYMAIL_VERSION=2.39.0 -t snappymail .
+
+# Build with a different default port
+docker build --build-arg HTTP_PORT=8080 -t snappymail .
 ```
 
 **Note**: Check [SnappyMail releases](https://github.com/the-djmaze/snappymail/releases) for available versions.
@@ -157,6 +162,18 @@ docker run -d \
   -e SNAPPYMAIL_ADMIN_PASS=mypassword \
   -e TZ=Asia/Tokyo \
   -e SNAPPYMAIL_MAX_ATTACHMENT_SIZE=100M \
+  --restart unless-stopped \
+  snappymail
+
+# With custom HTTP port (container listens on 8080 instead of 80)
+docker run -d \
+  --name snappymail \
+  -p 8080:8080 \
+  -v snappymail_data:/var/www/html/data \
+  -e SNAPPYMAIL_ADMIN_USER=myusername \
+  -e SNAPPYMAIL_ADMIN_PASS=mypassword \
+  -e TZ=Europe/Oslo \
+  -e HTTP_PORT=8080 \
   --restart unless-stopped \
   snappymail
 ```

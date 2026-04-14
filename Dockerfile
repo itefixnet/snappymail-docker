@@ -18,8 +18,10 @@ RUN wget -O snappymail.tar.gz "https://github.com/the-djmaze/snappymail/releases
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Expose port
-EXPOSE 80
+# Configurable HTTP port (default 80)
+ARG HTTP_PORT=80
+ENV HTTP_PORT=${HTTP_PORT}
+EXPOSE ${HTTP_PORT}
 
 # Use custom entrypoint
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
